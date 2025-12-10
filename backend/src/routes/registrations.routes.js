@@ -17,14 +17,11 @@ router.post(
   registrationController.subirComprobante
 );
 
-// Validar comprobante (organizador o admin)
+// Validar comprobante (organizador)
 router.put("/:registroId/validate", authMiddleware, registrationController.validateComprobante);
 
-// Cancelar inscripción (participante o admin)
+// Cancelar inscripción (participante u organizador)
 router.delete("/:registroId", authMiddleware, registrationController.cancelRegistration);
-
-//eliminar evento
-//router.delete("/event/:eventId", authMiddleware, registrationController.deleteEvent);
 
 // Generar QR para registro
 router.get("/:registroId/qr", authMiddleware, registrationController.generarQR);

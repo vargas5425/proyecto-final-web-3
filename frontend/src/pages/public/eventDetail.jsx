@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEventById, registerEvent } from "../../services/eventService.js";
-import { uploadComprobante } from "../../services/registrationService.js";
 import { useAuth } from "../../hooks/useAuth.js";
 import MapPicker from "../../components/MapPicker.jsx";
 
@@ -9,10 +8,7 @@ export default function EventDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-
   const [event, setEvent] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [file, setFile] = useState(null);
 
   useEffect(() => {
     getEventById(id).then(setEvent).catch(console.error);
@@ -28,35 +24,12 @@ export default function EventDetail() {
 
   const handleInscripcion = async () => {
     if (!user) return navigate("/login");
-    if (user.rol !== "participant")
-      return alert("Solo los participantes pueden inscribirse.");
 
     try {
-      const res = await registerEvent(event.id);
-      if (res.requiereComprobante) {
-        setShowModal(true);
-      } else {
+      await registerEvent(event.id);
         alert("Inscripción realizada con éxito.");
-      }
     } catch (err) {
       alert("Error: " + (err.response?.data?.mensaje || ""));
-    }
-  };
-
-  const handleUpload = async (e) => {
-    e.preventDefault();
-    if (!file) return alert("Selecciona un archivo.");
-
-    try {
-      await uploadComprobante(event.id, file);
-      alert("Comprobante subido correctamente.");
-      setShowModal(false);
-      setFile(null);
-    } catch (err) {
-      alert(
-        "Error al subir el comprobante: " +
-          (err.response?.data?.mensaje || err.message)
-      );
     }
   };
 
@@ -103,51 +76,6 @@ export default function EventDetail() {
             </div>
           </div>
         </div>
-
-        {/* Modal de comprobante */}
-        {showModal && (
-          <>
-            <div className="modal-backdrop show" />
-            <div className="modal show d-block" tabIndex={-1} role="dialog">
-              <div className="modal-dialog modal-dialog-centered" role="document">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h5 className="modal-title">Subir Comprobante de Pago</h5>
-                    <button
-                      type="button"
-                      className="btn-close"
-                      aria-label="Close"
-                      onClick={() => setShowModal(false)}
-                    />
-                  </div>
-
-                  <form onSubmit={handleUpload}>
-                    <div className="modal-body">
-                      <input
-                        className="form-control"
-                        type="file"
-                        accept="image/*,application/pdf"
-                        onChange={(e) => setFile(e.target.files[0])}
-                      />
-                    </div>
-                    <div className="modal-footer">
-                      <button
-                        type="button"
-                        className="btn btn-secondary"
-                        onClick={() => setShowModal(false)}
-                      >
-                        Cancelar
-                      </button>
-                      <button type="submit" className="btn btn-primary">
-                        Subir
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
 
         {/* Mapa con marcador en modo solo lectura */}
         {event.lat && event.lng && (

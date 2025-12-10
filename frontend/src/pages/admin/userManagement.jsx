@@ -35,7 +35,7 @@ useEffect(() => {
       alert("Rol actualizado correctamente");
     } catch (err) {
       console.error(err);
-      alert("Error al actualizar rol");
+      alert("No puedes asignar rol participant");
     }
   };
 

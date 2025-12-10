@@ -5,11 +5,11 @@ const authMiddleware = require("../middlewares/authMiddleware");
 const roleMiddleware = require("../middlewares/roleMiddleware");
 const { uploadAfiche } = require("../middlewares/uploadMiddleware");
 
-// Crear evento (organizador o admin)
+// Crear evento (organizador)
 router.post(
   "/",
   authMiddleware,
-  roleMiddleware(["organizer", "admin"]),
+  roleMiddleware(["organizer"]),
   uploadAfiche,
   eventController.crear
 );
@@ -20,11 +20,11 @@ router.get("/", eventController.listar);
 // Obtener un evento por ID (público)
 router.get("/:id", eventController.obtenerUno);
 
-// Obtener inscritos de un evento (solo organizador o admin)
+// Obtener inscritos de un evento (solo organizador)
 router.get(
   "/:id/inscritos",
   authMiddleware,
-  roleMiddleware(["organizer", "admin"]),
+  roleMiddleware(["organizer"]),
   eventController.obtenerInscritos
 );
 
@@ -32,24 +32,24 @@ router.get(
 router.get(
   "/:id/report",
   authMiddleware,
-  roleMiddleware(["organizer", "admin"]),
+  roleMiddleware(["organizer"]),
   eventController.obtenerReporte
 );
 
-// Editar evento (organizador o admin)
+// Editar evento (organizador)
 router.put(
   "/:id",
   authMiddleware,
-  roleMiddleware(["organizer", "admin"]),
+  roleMiddleware(["organizer"]),
   uploadAfiche, // opcional, por si se actualiza afiche
   eventController.editar
 );
 
-// Eliminar evento (solo organizador o admin)
+// Eliminar evento (solo organizador)
 router.delete(
   "/:id",
   authMiddleware,
-  roleMiddleware(["organizer", "admin"]),
+  roleMiddleware(["organizer"]),
   eventController.eliminar
 );
 

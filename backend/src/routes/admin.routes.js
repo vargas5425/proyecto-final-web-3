@@ -1,4 +1,3 @@
-// routes/admin.routes.js
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/admin.controller");
@@ -12,9 +11,5 @@ router.post(
   roleMiddleware(["admin"]),
   adminController.crearUsuarioConRol
 );
-
-// Temporalmente
-//router.post("/crear-usuario", adminController.crearUsuarioConRol);
-
 
 module.exports = router;

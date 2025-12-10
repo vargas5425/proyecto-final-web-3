@@ -1,6 +1,7 @@
 // services/eventService.js
 const { Event, User, Registration } = require("../models");
 const { Op } = require("sequelize");
+const event = require("../models/event");
 
 async function crearEvento(data) {
   return await Event.create(data);
@@ -14,9 +15,7 @@ async function editarEvento(id, data) {
 }
 
 async function listarEventos() {
-  return await Event.findAll({
-    include: [{ model: User, as: "organizer", attributes: ["id", "nombre", "email"] }],
-  });
+  return await Event.findAll();
 }
 
 async function obtenerEvento(id) {
