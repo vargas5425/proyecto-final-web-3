@@ -25,6 +25,10 @@ async function actualizarUsuario(id, { nombre, email, role }) {
     throw { statusCode: 403, message: "No puedes editar un participant" };
   }
 
+  if (role === "participant") {
+    throw { statusCode: 403, message: "No puedes asignar rol participant manualmente" };
+  }
+
   if (role) {
     const rolEncontrado = await Role.findOne({ where: { name: role } });
     if (!rolEncontrado) throw { statusCode: 400, message: "Rol inválido" };

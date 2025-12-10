@@ -65,6 +65,12 @@ useEffect(() => {
         </div>
       )}
 
+      {registrations.length === 0 && (
+        <div className="alert alert-secondary text-center">
+          No tienes inscripciones registradas.
+        </div>
+      )}
+
       <div className="row g-3">
         {registrations.map((reg) => (
           <div key={reg.id} className="col-12 col-md-6">

@@ -50,11 +50,11 @@ export default function CrearEvento() {
   const handleCreate = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("titulo", titulo);
-    formData.append("descripcion", descripcion);
-    formData.append("fechaHora", fechaHora);
-    formData.append("lugar", lugar);
-    formData.append("capacidad", capacidad);
+    formData.append("title", titulo);
+    formData.append("description", descripcion);
+    formData.append("dateTime", fechaHora);
+    formData.append("location", lugar);
+    formData.append("capacity", capacidad);
     formData.append("lat", lat);
     formData.append("lng", lng);
     formData.append("precio", precio);

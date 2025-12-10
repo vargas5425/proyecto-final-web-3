@@ -4,8 +4,8 @@ const eventService = require("../services/eventService");
 module.exports = {
   crear: async (req, res) => {
     try {
-      const { titulo, descripcion, fechaHora, lugar, capacidad, lat, lng, precio } = req.body;
-      if (!titulo || !fechaHora || !lugar || !capacidad || lat == null || lng == null) {
+      const { title, description, dateTime, location, capacity, lat, lng, precio } = req.body;
+      if (!title || !description || !dateTime || !location || !capacity || lat == null || lng == null) {
         return res.status(400).json({ mensaje: "Faltan datos obligatorios o coordenadas." });
       }
 
@@ -13,11 +13,11 @@ module.exports = {
       const precioValue = (precio === undefined || precio === "") ? null : Number(precio);
 
       const evento = await eventService.crearEvento({
-        title: titulo,
-        description: descripcion,
-        dateTime: fechaHora,
-        location: lugar,
-        capacity: capacidad,
+        title: title,
+        description: description,
+        dateTime: dateTime,
+        location: location,
+        capacity: capacity,
         organizerId: req.user?.id || null,
         posterPath: rutaAfiche,
         lat,
