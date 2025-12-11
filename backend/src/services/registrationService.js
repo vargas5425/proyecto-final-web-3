@@ -14,14 +14,39 @@ async function inscribirse(userId, eventoId) {
   }
 
   if (evento.capacity && evento.capacity > 0) {
+  const registrosActuales = await Registration.count({
+    where: {
+      eventId: eventoId,
+      status: { [Op.in]: ["pending", "accepted"] } // 👈 solo ocupan cupo estos estados
+    }
+  });
+
+  if (registrosActuales >= evento.capacity) {
+    throw { statusCode: 400, message: "El evento alcanzó su capacidad máxima." };
+  }
+}
+
+
+  /*if (evento.capacity && evento.capacity > 0) {
     const registrosActuales = await Registration.count({ where: { eventId: eventoId } });
     if (registrosActuales >= evento.capacity) {
       throw { statusCode: 400, message: "El evento alcanzó su capacidad máxima." };
     }
-  }
+  }*/
 
-  const yaInscrito = await Registration.findOne({ where: { userId, eventId: eventoId } });
-  if (yaInscrito) throw { statusCode: 400, message: "Ya estás inscrito en este evento." };
+  /*const yaInscrito = await Registration.findOne({ where: { userId, eventId: eventoId } });
+  if (yaInscrito) throw { statusCode: 400, message: "Ya estás inscrito en este evento." };*/
+
+  const yaInscrito = await Registration.findOne({
+  where: {
+    userId,
+    eventId: eventoId,
+    status: { [Op.in]: ["pending", "accepted"] } // 👈 solo bloquea si está activo
+  }
+});
+
+if (yaInscrito) throw { statusCode: 400, message: "Ya estás inscrito en este evento." };
+
 
   const token = genTokenHex(16);
 
