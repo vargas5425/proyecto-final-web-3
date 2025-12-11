@@ -1,4 +1,3 @@
-// controllers/admin.controller.js
 const adminService = require("../services/adminService");
 
 module.exports = {

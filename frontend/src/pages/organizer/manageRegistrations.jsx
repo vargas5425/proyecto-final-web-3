@@ -27,24 +27,6 @@ export default function ManageRegistrations({ eventId: propEventId }) {
     setModalOpen(false);
   };
 
-  /*const handleValidation = async (id, status) => {
-    try {
-      const reg = registrations.find((r) => r.id === id);
-      const response = await validateComprobante(id, status);
-      if (response.deleted) {
-        setRegistrations((prev) => prev.filter((r) => r.id !== id));
-        localStorage.setItem("rejectedEvent", JSON.stringify({ eventTitle: reg.eventTitle, eventId: reg.eventId }));
-        alert("Inscripción rechazada correctamente. El participante puede volver a inscribirse.");
-      } else {
-        setRegistrations((prev) => prev.map((r) => (r.id === id ? { ...r, status: "accepted" } : r)));
-        alert("Inscripción aceptada correctamente.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error al procesar la inscripción: " + (err.response?.data?.mensaje || err.message));
-    }
-  };*/
-
   const handleValidation = async (id, status) => {
   try {
     const reg = registrations.find((r) => r.id === id);

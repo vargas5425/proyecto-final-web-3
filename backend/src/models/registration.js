@@ -7,19 +7,19 @@ module.exports = (sequelize, DataTypes) => {
 
     paymentProofPath: DataTypes.STRING,
 
-    // Nuevo campo → token único para validar QR
+    //token único para validar QR
     tokenValidacion: {
       type: DataTypes.STRING,
       unique: true,
     },
 
-    // Nuevo campo → estado del ingreso
+    //estado del ingreso
     estadoIngreso: {
       type: DataTypes.ENUM("pending", "checked"),
       defaultValue: "pending",
     },
 
-    // Ya lo tenías → sirve como "fecha y hora de ingreso"
+    //sirve como "fecha y hora de ingreso"
     checkedInAt: DataTypes.DATE,
   });
 

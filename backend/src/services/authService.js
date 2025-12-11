@@ -1,4 +1,3 @@
-// services/authService.js
 const { User, Role } = require("../models");
 const { hashPassword } = require("../utils/cryptoUtils");
 const jwt = require("jsonwebtoken");

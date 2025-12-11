@@ -76,11 +76,11 @@ useEffect(() => {
     if (!modalUser.nombre || !modalUser.email) return alert("Completa todos los campos");
     try {
       if (modalUser.id) {
-        await updateUser(modalUser.id, { nombre: modalUser.nombre, email: modalUser.email });
+        await updateUser(modalUser.id, { nombre: modalUser.nombre, email: modalUser.email, role: modalUser.role });
         alert("Usuario actualizado correctamente");
       } else {
         if (!modalUser.password) return alert("Ingresa una contraseña");
-        await createUser({ nombre: modalUser.nombre, email: modalUser.email, password: modalUser.password, rol: modalUser.role });
+        await createUser({ nombre: modalUser.nombre, email: modalUser.email, password: modalUser.password, role: modalUser.role });
         alert("Usuario creado correctamente");
       }
       setShowModal(false);

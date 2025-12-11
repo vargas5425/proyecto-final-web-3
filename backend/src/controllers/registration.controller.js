@@ -1,4 +1,3 @@
-// controllers/registration.controller.js
 const registrationService = require("../services/registrationService");
 
 module.exports = {

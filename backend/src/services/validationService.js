@@ -1,4 +1,3 @@
-// services/qrService.js
 const { Registration, User, Event } = require("../models");
 
 async function validarQR(token) {

@@ -7,10 +7,6 @@ const Role = require("./role")(sequelize, Sequelize.DataTypes);
 const Event = require("./event")(sequelize, Sequelize.DataTypes);
 const Registration = require("./registration")(sequelize, Sequelize.DataTypes);
 
-// ---------------------------------------------------------
-// RELACIONES
-// ---------------------------------------------------------
-
 // Usuario → Rol
 User.belongsTo(Role, { foreignKey: "roleId" });
 
@@ -25,10 +21,6 @@ Registration.belongsTo(User, { foreignKey: "userId" });
 
 // Inscripción → Evento
 Registration.belongsTo(Event, { foreignKey: "eventId" });
-
-// ---------------------------------------------------------
-// EXPORTAR MODELOS
-// ---------------------------------------------------------
 
 module.exports = {
   sequelize,

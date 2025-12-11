@@ -1,9 +1,8 @@
-// services/adminService.js
 const { User, Role } = require("../models");
 const { hashPassword } = require("../utils/cryptoUtils");
 
 async function crearUsuarioConRol({ nombre, email, password, rol, userRole }) {
-  // Validar campos obligatorios
+
   if (!nombre || !email || !password || !rol) {
     throw new Error("Faltan datos.");
   }
@@ -25,7 +24,6 @@ async function crearUsuarioConRol({ nombre, email, password, rol, userRole }) {
     throw new Error("Rol inválido.");
   }
 
-  // Verificar si ya existe el email
   const existente = await User.findOne({ where: { email } });
   if (existente) {
     throw new Error("El correo ya está en uso.");

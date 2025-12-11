@@ -1,4 +1,3 @@
-// controllers/eventController.js
 const eventService = require("../services/eventService");
 
 module.exports = {
@@ -34,8 +33,30 @@ module.exports = {
 
   editar: async (req, res) => {
     try {
-      const evento = await eventService.editarEvento(req.params.id, req.body);
+      const { title, description, dateTime, location, capacity, lat, lng, precio } = req.body;
+
+      const rutaAfiche = req.file ? `uploads/afiches/${req.file.filename}` : undefined;
+      const precioValue = (precio === undefined || precio === "") ? null : Number(precio);
+
+      const data = {
+        title,
+        description,
+        dateTime,
+        location,
+        capacity,
+        lat,
+        lng,
+        precio: precioValue,
+      };
+
+      // Solo si se subió un nuevo archivo, actualiza posterPath
+      if (rutaAfiche) {
+        data.posterPath = rutaAfiche;
+      }
+
+      const evento = await eventService.editarEvento(req.params.id, data);
       if (!evento) return res.status(404).json({ mensaje: "Evento no encontrado." });
+
       res.json({ mensaje: "Evento actualizado correctamente.", evento });
     } catch (error) {
       console.error(error);

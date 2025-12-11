@@ -1,4 +1,3 @@
-// controllers/user.controller.js
 const userService = require("../services/userService");
 
 exports.listarUsuarios = async (req, res) => {

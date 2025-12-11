@@ -1,6 +1,5 @@
 module.exports = function soloParticipante(req, res, next) {
   try {
-    // Aquí accedemos al nombre del rol correctamente
     const rol = req.user?.Role?.name;
 
     if (rol !== "participant") {

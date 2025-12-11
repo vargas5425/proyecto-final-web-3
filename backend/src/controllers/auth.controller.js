@@ -1,4 +1,3 @@
-// controllers/auth.controller.js
 const authService = require("../services/authService");
 
 module.exports = {

@@ -1,4 +1,4 @@
-import api from "../services/api.js"; // instancia de axios con token
+import api from "../services/api.js";
 
 export const getEvents = async () => {
   const res = await api.get("/events");
@@ -14,12 +14,6 @@ export const registerEvent = async (eventId) => {
   const res = await api.post(`/registrations/${eventId}/inscribirse`);
   return res.data;
 };
-
-
-/*export const createEvent = async (data) => {
-  const res = await api.post("/events", data);
-  return res.data;
-};*/
 
 export const createEvent = async (formData) => {
   const res = await api.post("/events", formData, {

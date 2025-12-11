@@ -1,4 +1,3 @@
-// services/eventService.js
 const { Event, User, Registration } = require("../models");
 const { Op } = require("sequelize");
 const event = require("../models/event");
@@ -62,31 +61,6 @@ async function obtenerReporte(id, from, to) {
 
   return { inscritos, asistentes, cuposLibres };
 }
-
-
-
-/*async function obtenerReporte(id, from, to) {
-  const where = { eventId: id };
-  if (from || to) {
-    const createdAt = {};
-    if (from) createdAt[Op.gte] = new Date(from);
-    if (to) {
-      const toDate = new Date(to);
-      if (/^\d{4}-\d{2}-\d{2}$/.test(to)) {
-        toDate.setHours(23, 59, 59, 999);
-      }
-      createdAt[Op.lte] = toDate;
-    }
-    where.createdAt = createdAt;
-  }
-
-  const inscritos = await Registration.count({ where });
-  const asistentes = await Registration.count({ where: { ...where, estadoIngreso: "checked" } });
-  const evento = await Event.findByPk(id);
-  const cuposLibres = evento.capacity - inscritos;
-
-  return { inscritos, asistentes, cuposLibres };
-}*/
 
 async function eliminarEvento(id) {
   const evento = await Event.findByPk(id);

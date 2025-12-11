@@ -1,4 +1,4 @@
-require("dotenv").config(); // Siempre al inicio
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const { sequelize, Role } = require("./models");
@@ -13,11 +13,12 @@ app.use(cors({ origin: process.env.FRONTEND_URL }));
 
 // Rutas
 app.use("/api/auth", require("./routes/auth.routes"));
-app.use("/api/users", require("./routes/users.routes")); // si existe
+app.use("/api/users", require("./routes/users.routes"));
 app.use("/api/events", require("./routes/events.routes"));
 app.use("/api/registrations", require("./routes/registrations.routes"));
 app.use("/api/validate", require("./routes/validate.routes"));
 app.use("/api/admin", require("./routes/admin.routes"));
+
 // Sincronización de DB y creación de roles
 sequelize.sync({ alter: false, force: false }).then(async () => {
   console.log("Base de datos sincronizada");

@@ -1,4 +1,3 @@
-// controllers/qr.controller.js
 const qrService = require("../services/validationService");
 
 module.exports = {
