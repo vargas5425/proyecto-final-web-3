@@ -1,36 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { getMyRegistrations, uploadComprobante } from "../../services/registrationService.js";
 import QRCodeViewer from "../../components/QRCodeViewer.jsx";
 
 export default function MyRegistrations() {
-  const navigate = useNavigate();
   const [registrations, setRegistrations] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedReg, setSelectedReg] = useState(null);
   const [file, setFile] = useState(null);
-  const [rejectedMsg, setRejectedMsg] = useState("");
 
-  // --- Mover la función antes del useEffect ---
   const fetchRegistrations = () => {
     getMyRegistrations().then(setRegistrations).catch(console.error);
   };
 
 useEffect(() => {
   fetchRegistrations();
-
-  const rejectedEvent = localStorage.getItem("rejectedEvent");
-  if (rejectedEvent) {
-    const { eventTitle } = JSON.parse(rejectedEvent);
-    // Mueve la actualización de estado a un callback asíncrono
-    setTimeout(() => {
-      setRejectedMsg(`Tu inscripción a "${eventTitle}" fue rechazada.`);
-      // Limpiar localStorage
-      localStorage.removeItem("rejectedEvent");
-      // Quitar mensaje después de 5 segundos
-      setTimeout(() => setRejectedMsg(""), 5000);
-    }, 0);
-  }
 }, []);
 
   const openModal = (reg) => {
@@ -58,13 +41,6 @@ useEffect(() => {
     <div className="container my-4 pt-4 mt-5">
       <h2 className="text-center text-primary mb-4">Mis Inscripciones</h2>
 
-      {rejectedMsg && (
-        <div className="alert alert-danger d-flex justify-content-between align-items-center">
-          <span>{rejectedMsg}</span>
-          <button className="btn btn-light btn-sm" onClick={() => navigate("/")}>Ir a Eventos</button>
-        </div>
-      )}
-
       {registrations.length === 0 && (
         <div className="alert alert-secondary text-center">
           No tienes inscripciones registradas.
@@ -88,9 +64,17 @@ useEffect(() => {
               )}
 
               {reg.precio > 0 && reg.status === "pending" && (
-                <button className="btn btn-primary" onClick={() => openModal(reg)}>Subir Comprobante de Pago</button>
+                reg.paymentProofPath ? (
+                  <p className="text-muted fst-italic">
+                    Espera la validación del organizador.
+                  </p>
+                ) : (
+                  <button className="btn btn-primary" onClick={() => openModal(reg)}>
+                    Subir Comprobante de Pago
+                  </button>
+                )
               )}
-
+              
               {reg.status === "pending" && reg.precio === 0 && (
                 <p className="text-muted fst-italic">Espera a que el organizador acepte tu inscripción...</p>
               )}

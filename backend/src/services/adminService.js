@@ -1,13 +1,13 @@
 const { User, Role } = require("../models");
 const { hashPassword } = require("../utils/cryptoUtils");
 
-async function crearUsuarioConRol({ nombre, email, password, rol, userRole }) {
+async function crearUsuarioConRol({ nombre, email, password, role, userRole }) {
 
-  if (!nombre || !email || !password || !rol) {
+  if (!nombre || !email || !password || !role) {
     throw new Error("Faltan datos.");
   }
 
-  if (rol === "participant") {
+  if (role === "participant") {
     throw new Error("No se puede crear usuarios tipo participant.");
   }
 
@@ -19,7 +19,7 @@ async function crearUsuarioConRol({ nombre, email, password, rol, userRole }) {
   }
 
   // Verificar que el rol solicitado exista
-  const rolEncontrado = await Role.findOne({ where: { name: rol } });
+  const rolEncontrado = await Role.findOne({ where: { name: role } });
   if (!rolEncontrado) {
     throw new Error("Rol inválido.");
   }
@@ -41,7 +41,7 @@ async function crearUsuarioConRol({ nombre, email, password, rol, userRole }) {
     id: nuevoUsuario.id,
     nombre: nuevoUsuario.nombre,
     email: nuevoUsuario.email,
-    rol: rolEncontrado.name,
+    role: rolEncontrado.name,
   };
 }
 

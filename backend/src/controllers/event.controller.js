@@ -5,7 +5,11 @@ module.exports = {
     try {
       const { title, description, dateTime, location, capacity, lat, lng, precio } = req.body;
       if (!title || !description || !dateTime || !location || !capacity || lat == null || lng == null) {
-        return res.status(400).json({ mensaje: "Faltan datos obligatorios o coordenadas." });
+        return res.status(400).json({ message: "Faltan datos obligatorios o coordenadas." });
+      }
+
+      if (!req.file) {
+      return res.status(400).json({ message: "Debes subir un afiche para crear el evento." });
       }
 
       const rutaAfiche = req.file ? `uploads/afiches/${req.file.filename}` : null;

@@ -12,6 +12,16 @@ async function inscribirse(userId, eventoId) {
     throw { statusCode: 400, message: "El evento ya pasó, no puedes inscribirte." };
   }
 
+  const yaInscrito = await Registration.findOne({
+  where: {
+    userId,
+    eventId: eventoId,
+    status: { [Op.in]: ["pending", "accepted"] }
+  }
+});
+
+if (yaInscrito) throw { statusCode: 400, message: "Ya estás inscrito en este evento." };
+
   if (evento.capacity && evento.capacity > 0) {
   const registrosActuales = await Registration.count({
     where: {
@@ -24,18 +34,7 @@ async function inscribirse(userId, eventoId) {
     throw { statusCode: 400, message: "El evento alcanzó su capacidad máxima." };
   }
 }
-
-  const yaInscrito = await Registration.findOne({
-  where: {
-    userId,
-    eventId: eventoId,
-    status: { [Op.in]: ["pending", "accepted"] } // solo bloquea si está activo
-  }
-});
-
-if (yaInscrito) throw { statusCode: 400, message: "Ya estás inscrito en este evento." };
-
-
+  // Generar token de validación
   const token = genTokenHex(16);
 
   const registro = await Registration.create({
@@ -57,7 +56,11 @@ if (yaInscrito) throw { statusCode: 400, message: "Ya estás inscrito en este ev
 async function subirComprobante(userId, eventoId, file) {
   if (!file) throw { statusCode: 400, message: "Debe subir un comprobante." };
 
-  const registro = await Registration.findOne({ where: { userId, eventId: eventoId } });
+  //const registro = await Registration.findOne({ where: { userId, eventId: eventoId } });
+  const registro = await Registration.findOne({ 
+  where: { userId, eventId: eventoId, status: "pending" } 
+  });
+
   if (!registro) throw { statusCode: 400, message: "No tienes inscripción para este evento." };
 
   const evento = await Event.findByPk(eventoId);
@@ -109,6 +112,7 @@ async function getMyRegistrations(userId) {
     eventTitle: r.Event.title,
     precio: r.Event.precio,
     status: r.status,
+    paymentProofPath: r.paymentProofPath, 
     qrUrl: r.status === "accepted" && r.tokenValidacion
       ? `${process.env.FRONTEND_URL}/validar-qr?token=${r.tokenValidacion}`
       : null,

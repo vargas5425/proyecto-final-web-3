@@ -3,14 +3,14 @@ const adminService = require("../services/adminService");
 module.exports = {
   crearUsuarioConRol: async (req, res) => {
     try {
-      const { nombre, email, password, rol } = req.body;
+      const { nombre, email, password, role } = req.body;
       const userRole = req.user.Role?.name;
 
       const usuario = await adminService.crearUsuarioConRol({
         nombre,
         email,
         password,
-        rol,
+        role,
         userRole,
       });
 
