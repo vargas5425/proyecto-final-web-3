@@ -1,15 +1,13 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth.js";
 
 export default function Navbar() {
   const { user, setUser } = useAuth();
-  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     setUser(null);
-    navigate("/");
   };
 
   return (

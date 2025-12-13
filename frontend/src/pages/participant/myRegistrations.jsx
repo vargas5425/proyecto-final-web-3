@@ -74,10 +74,6 @@ useEffect(() => {
                   </button>
                 )
               )}
-              
-              {reg.status === "pending" && reg.precio === 0 && (
-                <p className="text-muted fst-italic">Espera a que el organizador acepte tu inscripción...</p>
-              )}
 
               {reg.status === "rejected" && (
                 <p className="text-danger">Tu inscripción fue rechazada.</p>

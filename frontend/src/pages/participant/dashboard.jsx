@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { getEvents, registerEvent } from "../../services/eventService.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import EventCard from "../../components/EventCard.jsx";
 
 export default function Dashboard() {
   const [events, setEvents] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     getEvents().then(setEvents).catch(console.error);
-  }, []);
+  }, [location.pathname]);
 
   const handleRegister = async (eventId) => {
     try {
