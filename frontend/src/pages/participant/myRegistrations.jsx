@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { getMyRegistrations, uploadComprobante } from "../../services/registrationService.js";
 import QRCodeViewer from "../../components/QRCodeViewer.jsx";
+import AlertModal from "../../components/alertModal.jsx";
 
 export default function MyRegistrations() {
   const [registrations, setRegistrations] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedReg, setSelectedReg] = useState(null);
   const [file, setFile] = useState(null);
+  const [alertData, setAlertData] = useState({ show: false, title: "", message: "" });
+            
+  const showAlert = (title, message) => {
+    setAlertData({ show: true, title, message });
+  };
 
   const fetchRegistrations = () => {
     getMyRegistrations().then(setRegistrations).catch(console.error);
@@ -23,16 +29,18 @@ useEffect(() => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!file) return alert("Selecciona un archivo.");
+    if (!file) 
+      return 
+        showAlert("Error", "Selecciona un archivo.");
 
     try {
       await uploadComprobante(selectedReg.eventId, file);
-      alert("Comprobante subido correctamente.");
+      showAlert("Éxito", "Comprobante subido correctamente.");
       setShowModal(false);
       setFile(null);
       fetchRegistrations();
     } catch (err) {
-      alert("Error al subir el comprobante: " + (err.response?.data?.mensaje || err.message));
+      showAlert("Error", "Error al subir el comprobante: " + (err.response?.data?.mensaje || err.message));
     }
   };
 
@@ -108,6 +116,12 @@ useEffect(() => {
         </>
       )}
     </div>
+        <AlertModal
+            show={alertData.show}
+            title={alertData.title}
+            message={alertData.message}
+            onClose={() => setAlertData({ ...alertData, show: false })}
+        />
   </div>
   );
 }

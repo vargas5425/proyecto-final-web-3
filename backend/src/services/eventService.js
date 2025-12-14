@@ -33,30 +33,33 @@ async function obtenerInscritos(id) {
 }
 
 async function obtenerReporte(id, from, to) {
-  const where = { eventId: id };
+  const eventWhere = { id };
   if (from || to) {
-    const createdAt = {};
-    if (from) createdAt[Op.gte] = new Date(from);
+    const dateRange = {};
+    if (from) {
+      const fromDate = new Date(from);
+      fromDate.setHours(0, 0, 0, 0);
+      dateRange[Op.gte] = fromDate;
+    }
     if (to) {
       const toDate = new Date(to);
-      if (/^\d{4}-\d{2}-\d{2}$/.test(to)) {
-        toDate.setHours(23, 59, 59, 999);
-      }
-      createdAt[Op.lte] = toDate;
+      toDate.setHours(23, 59, 59, 999);
+      dateRange[Op.lte] = toDate;
     }
-    where.createdAt = createdAt;
+    eventWhere.dateTime = dateRange; // 👈 filtrar por fecha del evento
   }
 
-  // Solo cuentan como inscritos los estados activos
+  const evento = await Event.findOne({ where: eventWhere });
+  if (!evento) return { inscritos: 0, asistentes: 0, cuposLibres: 0 };
+
   const inscritos = await Registration.count({
-    where: { ...where, status: { [Op.in]: ["pending", "accepted"] } }
+    where: { eventId: evento.id, status: { [Op.in]: ["pending", "accepted"] } }
   });
 
   const asistentes = await Registration.count({
-    where: { ...where, estadoIngreso: "checked" }
+    where: { eventId: evento.id, estadoIngreso: "checked" }
   });
 
-  const evento = await Event.findByPk(id);
   const cuposLibres = evento.capacity - inscritos;
 
   return { inscritos, asistentes, cuposLibres };

@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { getMyRegistrations, cancelRegistration } from "../../services/registrationService.js";
+import AlertModal from "../../components/alertModal.jsx";
 
 export default function CancelRegistration() {
   const [registrations, setRegistrations] = useState([]);
+  const [alertData, setAlertData] = useState({ show: false, title: "", message: "" });
+        
+  const showAlert = (title, message) => {
+    setAlertData({ show: true, title, message });
+  };
 
   useEffect(() => {
     getMyRegistrations().then(setRegistrations).catch(console.error);
   }, []);
 
   const handleCancel = async (id) => {
+    if (!window.confirm("¿Eliminar esta inscripción?")) return;
     try {
       await cancelRegistration(id);
-      alert("Inscripción cancelada");
+      showAlert("Éxito", "Inscripción cancelada");
       setRegistrations((prev) => prev.filter((r) => r.id !== id));
     } catch (err) {
-      alert(err.response?.data?.mensaje || "Error al cancelar inscripción.");
+      showAlert("Error", err.response?.data?.mensaje || "Error al cancelar inscripción.");
     }
   };
 
@@ -37,6 +44,12 @@ export default function CancelRegistration() {
         ))}
       </div>
     </div>
+        <AlertModal
+            show={alertData.show}
+            title={alertData.title}
+            message={alertData.message}
+            onClose={() => setAlertData({ ...alertData, show: false })}
+        />
   </div>
   );
 }

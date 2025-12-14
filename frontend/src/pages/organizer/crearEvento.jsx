@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createEvent, getEventById, updateEvent } from "../../services/eventService.js";
 import MapPicker from "../../components/MapPicker.jsx";
+import AlertModal from "../../components/alertModal.jsx";
 
 export default function CrearEvento() {
   const navigate = useNavigate();
@@ -16,8 +17,12 @@ export default function CrearEvento() {
   const [lng, setLng] = useState("");
   const [afiche, setAfiche] = useState(null);
   const [loading, setLoading] = useState(false);
-
   const { id } = useParams();
+  const [alertData, setAlertData] = useState({ show: false, title: "", message: "" });
+  
+    const showAlert = (title, message) => {
+    setAlertData({ show: true, title, message });
+    };
 
   useEffect(() => {
     if (!id) return;
@@ -63,14 +68,14 @@ export default function CrearEvento() {
     try {
       if (id) {
         await updateEvent(id, formData);
-        alert("Evento actualizado correctamente");
+        showAlert("Éxito", "Evento actualizado correctamente");
       } else {
         await createEvent(formData);
-        alert("Evento creado correctamente");
+        showAlert("Éxito", "Evento creado correctamente");
       }
       navigate("/organizer");
     } catch (err) {
-      alert("Error al crear evento: " + (err.response?.data?.message || err.message));
+      showAlert("Error", "Error al crear evento: " + (err.response?.data?.message || err.message));
     }
   };
 
@@ -226,15 +231,18 @@ export default function CrearEvento() {
                       Cancelar
                     </button>
                   </div>
-
-
               </form>
-
             </div>
           </div>
         </div>
       </div>
     </div>
+        <AlertModal
+            show={alertData.show}
+            title={alertData.title}
+            message={alertData.message}
+            onClose={() => setAlertData({ ...alertData, show: false })}
+        />
     </div>
   );
 }

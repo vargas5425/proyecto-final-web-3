@@ -6,11 +6,18 @@ import {
   deleteUser,
   changePassword,
 } from "../../services/userService.js";
+import AlertModal from "../../components/alertModal.jsx";
+
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [modalUser, setModalUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [alertData, setAlertData] = useState({ show: false, title: "", message: "" });
+
+  const showAlert = (title, message) => {
+  setAlertData({ show: true, title, message });
+  };
 
   const loadUsers = async () => {
     try {
@@ -32,21 +39,22 @@ useEffect(() => {
     try {
       await updateUser(id, { role });
       await loadUsers();
-      alert("Rol actualizado correctamente");
+      showAlert("Éxito", "Rol actualizado correctamente");
     } catch (err) {
       console.error(err);
-      alert("No puedes asignar rol participant");
+      showAlert("Error", "No puedes asignar rol participant");
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Eliminar este usuario?")) return;
+    if (!window.confirm("¿Eliminar este usuario?")) 
+      return;
     try {
       await deleteUser(id);
       await loadUsers();
     } catch (err) {
       console.error(err);
-      alert("Error al eliminar usuario");
+      showAlert("Error", "Error al eliminar usuario");
     }
   };
 
@@ -55,10 +63,10 @@ useEffect(() => {
     if (!password) return;
     try {
       await changePassword(id, password);
-      alert("Contraseña cambiada");
+      showAlert("Éxito","Contraseña cambiada");
     } catch (err) {
       console.error(err);
-      alert("Error al cambiar contraseña");
+      showAlert("Error", "Error al cambiar contraseña");
     }
   };
 
@@ -73,22 +81,24 @@ useEffect(() => {
   };
 
   const handleSaveUser = async () => {
-    if (!modalUser.nombre || !modalUser.email) return alert("Completa todos los campos");
+    if (!modalUser.nombre || !modalUser.email) return 
+    showAlert("Error", "Completa todos los campos");
     try {
       if (modalUser.id) {
         await updateUser(modalUser.id, { nombre: modalUser.nombre, email: modalUser.email, role: modalUser.role });
-        alert("Usuario actualizado correctamente");
+        showAlert("Éxito", "Usuario actualizado correctamente");
       } else {
-        if (!modalUser.password) return alert("Ingresa una contraseña");
+        if (!modalUser.password) return 
+        showAlert("Error", "Ingresa una contraseña");
         await createUser({ nombre: modalUser.nombre, email: modalUser.email, password: modalUser.password, role: modalUser.role });
-        alert("Usuario creado correctamente");
+        showAlert("Éxito", "Usuario creado correctamente");
       }
       setShowModal(false);
       setModalUser(null);
       await loadUsers();
     } catch (err) {
       console.error(err);
-      alert("Error: " + (err.response?.data?.mensaje || "Revisa la consola"));
+      showAlert("Error",(err.response?.data?.mensaje));
     }
   };
 
@@ -169,6 +179,12 @@ useEffect(() => {
           ))}
         </tbody>
       </table>
+      <AlertModal
+        show={alertData.show}
+        title={alertData.title}
+        message={alertData.message}
+        onClose={() => setAlertData({ ...alertData, show: false })}
+      />
     </div>
   );
 }

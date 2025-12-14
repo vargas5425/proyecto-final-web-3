@@ -2,22 +2,28 @@ import React, { useEffect, useState } from "react";
 import { getEvents, registerEvent } from "../../services/eventService.js";
 import { useNavigate, useLocation } from "react-router-dom";
 import EventCard from "../../components/EventCard.jsx";
+import AlertModal from "../../components/alertModal.jsx";
 
 export default function Dashboard() {
   const [events, setEvents] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const [alertData, setAlertData] = useState({ show: false, title: "", message: "" });
+          
+  const showAlert = (title, message) => {
+    setAlertData({ show: true, title, message });
+  };
 
   useEffect(() => {
     getEvents().then(setEvents).catch(console.error);
-  }, [location.pathname]);
+  }, [location]);
 
   const handleRegister = async (eventId) => {
     try {
       await registerEvent(eventId);
-      alert("Inscripción realizada con éxito. Revisa tu QR en 'Mis Inscripciones'.");
+      showAlert("Éxito", "Inscripción realizada con éxito. Revisa tu QR en 'Mis Inscripciones'.");
     } catch (err) {
-      alert("Error al inscribirse: " + (err.response?.data?.mensaje || ""));
+      showAlert("Error", "Error al inscribirse: " + (err.response?.data?.mensaje || ""));
     }
   };
 
@@ -39,13 +45,17 @@ export default function Dashboard() {
                   onRegister={() => handleRegister(event.id)}
                   onViewDetails={() => navigate(`/participant/event/${event.id}`)}
                 />
-
               </div>
             </div>
           ))}
         </div>
-
       </div>
+          <AlertModal
+              show={alertData.show}
+              title={alertData.title}
+              message={alertData.message}
+              onClose={() => setAlertData({ ...alertData, show: false })}
+          />
     </div>
   );
 }

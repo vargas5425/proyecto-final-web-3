@@ -2,20 +2,28 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getEvents, deleteEvent } from "../../services/eventService.js";
 import EventCard from "../../components/EventCard.jsx";
+import AlertModal from "../../components/alertModal.jsx";
 
 export default function Dashboard() {
   const [events, setEvents] = useState([]);
+  const [alertData, setAlertData] = useState({ show: false, title: "", message: "" });
+    
+  const showAlert = (title, message) => {
+    setAlertData({ show: true, title, message });
+  };
 
   useEffect(() => {
     getEvents().then(setEvents);
   }, []);
 
   const handleDelete = async (id) => {
+    if (!window.confirm("¿Eliminar este usuario?")) 
+      return;
     try {
       await deleteEvent(id);
       setEvents(events.filter((e) => e.id !== id));
     } catch {
-      alert("Error al borrar evento");
+      showAlert("Error", "Error al borrar evento");
     }
   };
 
@@ -46,6 +54,12 @@ export default function Dashboard() {
         </div>
 
       </div>
+          <AlertModal
+              show={alertData.show}
+              title={alertData.title}
+              message={alertData.message}
+              onClose={() => setAlertData({ ...alertData, show: false })}
+          />
     </div>
   );
 }

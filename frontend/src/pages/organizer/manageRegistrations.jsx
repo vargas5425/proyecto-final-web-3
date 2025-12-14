@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getRegistrationsByEvent, validateComprobante, cancelRegistration } from "../../services/registrationService.js";
+import AlertModal from "../../components/alertModal.jsx";
 
 export default function ManageRegistrations({ eventId: propEventId }) {
   const params = useParams();
@@ -9,7 +10,12 @@ export default function ManageRegistrations({ eventId: propEventId }) {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(true);
-
+  const [alertData, setAlertData] = useState({ show: false, title: "", message: "" });
+      
+  const showAlert = (title, message) => {
+      setAlertData({ show: true, title, message });
+  };
+  
   useEffect(() => {
     getRegistrationsByEvent(eventId)
       .then((data) => setRegistrations(data))
@@ -43,26 +49,25 @@ export default function ManageRegistrations({ eventId: propEventId }) {
         "rejectedEvent",
         JSON.stringify({ eventTitle: reg.eventTitle, eventId: reg.eventId })
       );
-      alert("Inscripción rechazada correctamente. El participante puede volver a inscribirse.");
+      showAlert("Éxito", "Inscripción rechazada correctamente. El participante puede volver a inscribirse.");
     } else {
-      alert("Inscripción aceptada correctamente.");
+      showAlert("Éxito", "Inscripción aceptada correctamente.");
     }
   } catch (err) {
     console.error(err);
-    alert("Error al procesar la inscripción: " + (err.response?.data?.mensaje || err.message));
+    showAlert("Error", "Error al procesar la inscripción: " + (err.response?.data?.mensaje || err.message));
   }
 };
-
 
   const handleCancel = async (id) => {
     if (!confirm("¿Eliminar esta inscripción?")) return;
     try {
       await cancelRegistration(id);
       setRegistrations((prev) => prev.filter((r) => r.id !== id));
-      alert("Inscripción eliminada.");
+      showAlert("Éxito", "Inscripción eliminada.");
     } catch (err) {
       console.error(err);
-      alert("No se pudo eliminar la inscripción: " + (err.response?.data?.mensaje || err.message));
+      showAlert("Error", "No se pudo eliminar la inscripción: " + (err.response?.data?.mensaje || err.message));
     }
   };
 
@@ -229,6 +234,12 @@ const downloadWord = () => {
           </div>
         </>
       )}
+          <AlertModal
+              show={alertData.show}
+              title={alertData.title}
+              message={alertData.message}
+              onClose={() => setAlertData({ ...alertData, show: false })}
+          />
     </div>
   );
 }

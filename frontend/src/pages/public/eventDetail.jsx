@@ -3,12 +3,18 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getEventById, registerEvent } from "../../services/eventService.js";
 import { useAuth } from "../../hooks/useAuth.js";
 import MapPicker from "../../components/MapPicker.jsx";
+import AlertModal from "../../components/alertModal.jsx";
 
 export default function EventDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [event, setEvent] = useState(null);
+  const [alertData, setAlertData] = useState({ show: false, title: "", message: "" });
+              
+  const showAlert = (title, message) => {
+    setAlertData({ show: true, title, message });
+  };
 
   useEffect(() => {
     getEventById(id).then(setEvent).catch(console.error);
@@ -16,30 +22,44 @@ export default function EventDetail() {
 
   if (!event) return <div className="alert alert-secondary">Cargando evento...</div>;
 
-  const posterUrl = `http://localhost:4000/${event.posterPath?.replace(/\\/g, "/")}`;
+  const posterUrl = `http://localhost:4000/${event.posterPath.replace(/\\/g, "/")}`;
   const mapsLink =
     event.lat && event.lng
       ? `https://www.google.com/maps?q=${event.lat},${event.lng}`
       : null;
 
   const handleInscripcion = async () => {
-    if (!user) return navigate("/login");
+    if (!user) 
+      return 
+        navigate("/login");
 
     try {
       await registerEvent(event.id);
-        alert("Inscripción realizada con éxito.");
+      showAlert("Éxito", "Inscripción realizada con éxito.");
     } catch (err) {
-      alert("Error: " + (err.response?.data?.mensaje || ""));
+      showAlert("Error", "Error: " + (err.response?.data?.mensaje || ""));
     }
   };
 
   return (
     <div className="position-absolute top-0 start-0 w-100 min-vh-100 bg-dark text-white">
-      <div className="container my-4">
-        <div className="card">
-          {posterUrl && <img src={posterUrl} className="card-img-top" alt={event.title} />}
-          <div className="card-body">
-            <div className="d-flex justify-content-between align-items-start">
+      <div className="container my-4 pt-5">
+        <div className="card d-flex flex-row">
+          {/* Imagen a la izquierda */}
+          {posterUrl && (
+            <div style={{ flex: "1 1 40%", maxHeight: "300px", overflow: "hidden" }}>
+              <img
+                src={posterUrl}
+                alt={event.title}
+                className="w-100 h-100 rounded"
+                style={{ objectFit: "cover" }}
+              />
+            </div>
+          )}
+
+          {/* Contenido a la derecha */}
+          <div className="card-body flex-grow-1">
+            <div className="d-flex justify-content-between align-items-start mb-2">
               <h3 className="card-title">{event.title}</h3>
               <small className="text-muted">
                 {event.precio != null && Number(event.precio) > 0
@@ -92,7 +112,12 @@ export default function EventDetail() {
           </div>
         )}
       </div>
+        <AlertModal
+            show={alertData.show}
+            title={alertData.title}
+            message={alertData.message}
+            onClose={() => setAlertData({ ...alertData, show: false })}
+        />
     </div>
   );
 }
-

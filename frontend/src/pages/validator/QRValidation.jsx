@@ -17,17 +17,17 @@ export default function QRValidation() {
 
       if (!token) {
         setResult({ status: "inválido" });
-        setCode(""); // ✅ limpiar campo si no hay token
+        setCode(""); // limpiar campo si no hay token
         return;
       }
 
       const res = await validateQR(token);
       setResult(res);
-
-      setCode(""); // ✅ limpiar campo después de validar
+      setCode(""); // limpiar campo después de validar
+      
     } catch {
       setResult({ status: "inválido" });
-      setCode(""); // ✅ limpiar campo también en caso de error
+      setCode(""); // limpiar campo también en caso de error
     }
   };
 

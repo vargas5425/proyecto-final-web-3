@@ -41,8 +41,8 @@ export default function Reports() {
       setLoading(true);
       try {
         const params = {};
-        if (fromDate) params.from = fromDate;
-        if (toDate) params.to = toDate;
+        if (fromDate) params.from = fromDate + "T00:00:00";
+        if (toDate) params.to = toDate + "T23:59:59";
         const data = await getEventReport(selectedEventId, params);
         setReport(data);
       } catch (err) {
