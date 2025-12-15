@@ -4,13 +4,13 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 
 function LocationMarker({ position, setPosition, setLugar, readOnly }) {
   useMapEvents({
-    click: async (e) => {
-      if (readOnly) return; // No permite mover el marcador
+    click: async (evento) => {
+      if (readOnly) 
+        return;
 
-      const pos = [e.latlng.lat, e.latlng.lng];
+      const pos = [evento.latlng.lat, evento.latlng.lng];
       setPosition(pos);
 
-      // obtener nombre del lugar
       try {
         const res = await fetch(
           `https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos[0]}&lon=${pos[1]}`

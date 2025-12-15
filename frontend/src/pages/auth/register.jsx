@@ -34,6 +34,8 @@ export default function Register() {
                 placeholder="Nombre completo"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
+                pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ][A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$"
+                title="no se permite espacios al inicio, solo letras y espacios, sin símbolos ni números"
                 required
               />
             </div>
@@ -54,6 +56,7 @@ export default function Register() {
                 placeholder="Contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                minLength={8}
                 required
               />
             </div>

@@ -29,9 +29,10 @@ export default function EventDetail() {
       : null;
 
   const handleInscripcion = async () => {
-    if (!user) 
-      return 
-        navigate("/login");
+    if (!user) {
+      navigate("/login");
+      return;
+    }
 
     try {
       await registerEvent(event.id);
@@ -63,17 +64,17 @@ export default function EventDetail() {
               <h3 className="card-title">{event.title}</h3>
               <small className="text-muted">
                 {event.precio != null && Number(event.precio) > 0
-                  ? `$${Number(event.precio).toFixed(2)}`
+                  ? `Bs${Number(event.precio).toFixed(2)}`
                   : "Gratis"}
               </small>
             </div>
 
             <p className="card-text">{event.description}</p>
 
-            <p className="text-muted">
+            <p className="text-muted"><strong>Fecha:</strong>
               {new Date(event.dateTime).toLocaleDateString()}
             </p>
-            <p className="text-muted mb-4">
+            <p className="text-muted mb-4"><strong>Horario:</strong>
               {new Date(event.dateTime).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",

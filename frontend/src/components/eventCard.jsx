@@ -31,7 +31,7 @@ export default function EventCard({
           <h5 className="card-title">{event.title}</h5>
           <small className="text-muted">
             {event.precio != null && Number(event.precio) > 0 
-              ? `$${Number(event.precio).toFixed(2)}`
+              ? `Bs${Number(event.precio).toFixed(2)}`
               : "Gratis"}
           </small>
         </div>
@@ -41,18 +41,6 @@ export default function EventCard({
         </p>
 
         <div className="mt-auto">
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <p className="text-muted mb-0">
-              {new Date(event.dateTime).toLocaleDateString()}
-            </p>
-            <p className="text-muted mb-0">
-              {new Date(event.dateTime).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit"
-              })}
-            </p>
-          </div>
-
           {/* Botones para organizador */}
           {isOrganizer && (
             <div className="d-flex flex-column gap-2">

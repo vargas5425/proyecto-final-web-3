@@ -8,10 +8,10 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
       const token = localStorage.getItem("token");
-  if (!token) {
-        setTimeout(() => setLoading(false), 0);
-    return;
-  }
+        if (!token) {
+              setTimeout(() => setLoading(false), 0);
+          return;
+        }
 
       getCurrentUser()
       .then((data) => {
