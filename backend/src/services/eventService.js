@@ -33,7 +33,8 @@ async function obtenerInscritos(id) {
 }
 
 async function obtenerReporte(id, from, to) {
-  const eventWhere = { id };
+  const where = { eventId: id }; // 👈 filtro base por evento
+
   if (from || to) {
     const dateRange = {};
     if (from) {
@@ -46,24 +47,26 @@ async function obtenerReporte(id, from, to) {
       toDate.setHours(23, 59, 59, 999);
       dateRange[Op.lte] = toDate;
     }
-    eventWhere.dateTime = dateRange; // 👈 filtrar por fecha del evento
+    where.createdAt = dateRange; // 👈 filtrar por fecha de inscripción
   }
 
-  const evento = await Event.findOne({ where: eventWhere });
-  if (!evento) return { inscritos: 0, asistentes: 0, cuposLibres: 0 };
-
+  // inscritos activos en ese rango
   const inscritos = await Registration.count({
-    where: { eventId: evento.id, status: { [Op.in]: ["pending", "accepted"] } }
+    where: { ...where, status: { [Op.in]: ["pending", "accepted"] } }
   });
 
+  // asistentes confirmados en ese rango
   const asistentes = await Registration.count({
-    where: { eventId: evento.id, estadoIngreso: "checked" }
+    where: { ...where, estadoIngreso: "checked" }
   });
 
+  // capacidad del evento (no depende del rango)
+  const evento = await Event.findByPk(id);
   const cuposLibres = evento.capacity - inscritos;
 
   return { inscritos, asistentes, cuposLibres };
 }
+
 
 async function eliminarEvento(id) {
   const evento = await Event.findByPk(id);

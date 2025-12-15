@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getRegistrationsByEvent, validateComprobante, cancelRegistration } from "../../services/registrationService.js";
 import AlertModal from "../../components/alertModal.jsx";
+import { getEventById } from "../../services/eventService.js";
 
 export default function ManageRegistrations({ eventId: propEventId }) {
   const params = useParams();
@@ -11,6 +12,7 @@ export default function ManageRegistrations({ eventId: propEventId }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(true);
   const [alertData, setAlertData] = useState({ show: false, title: "", message: "" });
+  const [event, setEvent] = useState(null);
       
   const showAlert = (title, message) => {
       setAlertData({ show: true, title, message });
@@ -21,6 +23,10 @@ export default function ManageRegistrations({ eventId: propEventId }) {
       .then((data) => setRegistrations(data))
       .catch(console.error)
       .finally(() => setLoading(false));
+
+    getEventById(eventId)
+      .then((data) => setEvent(data))
+      .catch(console.error);
   }, [eventId]);
 
   const openComprobanteModal = (path) => {
@@ -78,15 +84,13 @@ export default function ManageRegistrations({ eventId: propEventId }) {
 const downloadWord = () => {
   if (!registrations.length) return;
 
-  const eventTitle = registrations[0]?.eventTitle || "Evento sin título";
+  const eventTitle = event?.title  || "Evento sin título";
 
-  const headers = ["Nombre", "Email", "Estado", "Token de validación", "Ingreso"];
+  const headers = ["Nombre", "Email", "Estado"];
   const rows = registrations.map(r => [
     r.User?.nombre,
     r.User?.email,
     r.status,
-    r.tokenValidacion,
-    r.estadoIngreso,
   ]);
 
   let htmlContent = `
@@ -140,10 +144,9 @@ const downloadWord = () => {
   document.body.removeChild(link);
 };
 
-
   return (
     <div className="container my-4">
-      <h2 className="mb-3">Inscritos del evento</h2>
+      <h2 className="mb-3">Inscritos del evento: {event?.title }</h2>
 
       {/* BOTÓN PARA DESCARGAR CSV */}
       {registrations.length > 0 && (

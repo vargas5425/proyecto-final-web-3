@@ -30,10 +30,10 @@ export default function UserManagement() {
 
 useEffect(() => {
   const fetchData = async () => {
-    await loadUsers();
+    await loadUsers();//esperar la respuesta del backend
   };
   fetchData();
-}, []);
+}, []);//si se borra [] haria multiples peticiones al backend 
 
   const handleRoleChange = async (id, role) => {
     try {
@@ -81,8 +81,12 @@ useEffect(() => {
   };
 
   const handleSaveUser = async () => {
-    if (!modalUser.nombre || !modalUser.email) return 
-    showAlert("Error", "Completa todos los campos");
+    if (!modalUser.nombre || !modalUser.email) {
+      showAlert("Error", "Completa todos los campos");
+      return;
+    }
+
+      
     try {
       if (modalUser.id) {
         await updateUser(modalUser.id, { nombre: modalUser.nombre, email: modalUser.email, role: modalUser.role });
